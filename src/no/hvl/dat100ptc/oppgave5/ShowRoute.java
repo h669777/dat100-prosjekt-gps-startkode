@@ -55,35 +55,66 @@ public class ShowRoute extends EasyGraphics {
 	
 		double ystep;
 		
-		// TODO - START
+		double maxlat = GPSUtils.findMax(GPSUtils.getLatitudes(gpspoints));
+		double minlat = GPSUtils.findMin(GPSUtils.getLatitudes(gpspoints));
 		
-		throw new UnsupportedOperationException(TODO.method());
-
-		// TODO - SLUTT
-		
+		ystep = MAPYSIZE / (Math.abs(maxlat-minlat));
+		return ystep;
 	}
 
 	public void showRouteMap(int ybase) {
+		
+		int sumx = 0;
+		int sumy = 0;		
+		
+		double[] lonArr = GPSUtils.getLongitudes(gpspoints);
+		double[] latArr = GPSUtils.getLatitudes(gpspoints);
 
-		// TODO - START
+		for (int i = 0; i < gpspoints.length-1; i++) {
+			
+			double lon = lonArr[i+1] - lonArr[i];
+			double lat = latArr[i+1] - latArr[i];
+			
+			
+			double x = xstep()*lon;
+			long x1 = Math.round(x);
+			
+			// så x1 kan brukes i drawLine (kan ikke ha long)
+			int x2 = (int) x1;
+			
+			double y = ystep()*lat;
+			long y1 = Math.round(y);
+			
+			// så y1 kan brukes i drawLine (kan ikke ha long)
+			int y2 = (int) y1;
+			
+			sumx+= x1;
+			sumy+= y1;
+			
+			System.out.println(latArr[i]);
+			
+			
+			setColor(0,250,0);
+			fillCircle(MARGIN+sumx,(-sumy/2)+120,2);
+			
+			drawLine(MARGIN+sumx,(-sumy/2)+120,MARGIN+sumx-x2,((-sumy+y2)/2)+120);
+
+		}
 		
-		throw new UnsupportedOperationException(TODO.method());
 		
-		// TODO - SLUTT
 	}
-
+	private static double WEIGHT = 80.0;
 	public void showStatistics() {
-
-		int TEXTDISTANCE = 20;
 
 		setColor(0,0,0);
 		setFont("Courier",12);
 		
-		// TODO - START
-		
-		throw new UnsupportedOperationException(TODO.method());
-		
-		// TODO - SLUTT;
+		drawString("Total Time     :" + GPSUtils.formatTime(gpscomputer.totalTime()),20,20);
+		drawString("Total distance :    " + GPSComputer.rund (gpscomputer.totalDistance() /1000)  + " km",20,40);
+		drawString("Total elevation:    " + GPSComputer.rund (gpscomputer.totalElevation()) + " m",20,60);
+		drawString("Max speed      :    " + gpscomputer.maxSpeed() + " km/t",20,80);
+		drawString("Average speed  :    " + GPSComputer.rund(gpscomputer.averageSpeed()) + " km/t",20,100);
+		drawString("Energy         :    " + GPSComputer.rund(gpscomputer.totalKcal(WEIGHT)) +" kcal ",20,120);
 	}
 
 }
