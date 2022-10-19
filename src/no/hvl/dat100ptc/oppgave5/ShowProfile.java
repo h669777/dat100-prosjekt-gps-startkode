@@ -52,10 +52,8 @@ public class ShowProfile extends EasyGraphics {
 			
 			setColor(0,0,250);
 			
-			drawLine(i+x,ybase,i+x,ybase-hoyde);
-			
+			drawLine(i+x , ybase , i+x , ybase-hoyde);
 		}
-
 		
 	}
 

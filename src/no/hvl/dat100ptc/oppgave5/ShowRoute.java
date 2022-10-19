@@ -16,7 +16,7 @@ public class ShowRoute extends EasyGraphics {
 
 	private GPSPoint[] gpspoints;
 	private GPSComputer gpscomputer;
-	
+
 	public ShowRoute() {
 
 		String filename = JOptionPane.showInputDialog("GPS data filnavn: ");
@@ -35,7 +35,7 @@ public class ShowRoute extends EasyGraphics {
 		makeWindow("Route", MAPXSIZE + 2 * MARGIN, MAPYSIZE + 2 * MARGIN);
 
 		showRouteMap(MARGIN + MAPYSIZE);
-		
+
 		showStatistics();
 	}
 
@@ -45,76 +45,74 @@ public class ShowRoute extends EasyGraphics {
 		double maxlon = GPSUtils.findMax(GPSUtils.getLongitudes(gpspoints));
 		double minlon = GPSUtils.findMin(GPSUtils.getLongitudes(gpspoints));
 
-		double xstep = MAPXSIZE / (Math.abs(maxlon - minlon)); 
+		double xstep = MAPXSIZE / (Math.abs(maxlon - minlon));
 
 		return xstep;
 	}
 
 	// antall y-pixels per breddegrad
 	public double ystep() {
-	
+
 		double ystep;
-		
+
 		double maxlat = GPSUtils.findMax(GPSUtils.getLatitudes(gpspoints));
 		double minlat = GPSUtils.findMin(GPSUtils.getLatitudes(gpspoints));
-		
-		ystep = MAPYSIZE / (Math.abs(maxlat-minlat));
+
+		ystep = MAPYSIZE / (Math.abs(maxlat - minlat));
 		return ystep;
 	}
 
 	public void showRouteMap(int ybase) {
-		
+		// Brukes til å finne posisjonen til gps punktet
 		int sumx = 0;
-		int sumy = 0;		
-		
+		int sumy = 0;
+
+		// Henter longitudes og latitudes data
 		double[] lonArr = GPSUtils.getLongitudes(gpspoints);
 		double[] latArr = GPSUtils.getLatitudes(gpspoints);
 
-		for (int i = 0; i < gpspoints.length-1; i++) {
-			
-			double lon = lonArr[i+1] - lonArr[i];
-			double lat = latArr[i+1] - latArr[i];
-			
-			
-			double x = xstep()*lon;
-			long x1 = Math.round(x);
-			
-			// så x1 kan brukes i drawLine (kan ikke ha long)
-			int x2 = (int) x1;
-			
-			double y = ystep()*lat;
-			long y1 = Math.round(y);
-			
-			// så y1 kan brukes i drawLine (kan ikke ha long)
-			int y2 = (int) y1;
-			
-			sumx+= x1;
-			sumy+= y1;
-			
-			System.out.println(latArr[i]);
-			
-			
-			setColor(0,250,0);
-			fillCircle(MARGIN+sumx,(-sumy/2)+120,2);
-			
-			drawLine(MARGIN+sumx,(-sumy/2)+120,MARGIN+sumx-x2,((-sumy+y2)/2)+120);
+		for (int i = 0; i < gpspoints.length - 1; i++) {
 
+			// Finner differansen mellom to etterfulgende gps punkt
+			double lon = lonArr[i + 1] - lonArr[i];
+			double lat = latArr[i + 1] - latArr[i];
+
+			// Ganger differansen med xstep og ystep metodene for å få et punkt innenfor skjermen
+			double x = xstep() * lon;
+			int x1 = (int) Math.round(x);
+
+			double y = ystep() * lat;
+			int y1 = (int) Math.round(y);
+
+			// plusser på differansene for hver iterasjon i løkken
+			sumx += x1;
+			sumy += y1;
+
+			// Tegner sirkler med radius 2 på stedet hvor gpspunktet er lokalisert
+			setColor(0, 250, 0);
+			fillCircle(MARGIN + sumx , (-sumy / 2) + 120 , 2);
+
+			// Tegner en linje fra sirkelen som nettop ble tegnet til den forrige sirkelen
+			// som ble tegnet
+			drawLine(MARGIN + sumx , (-sumy / 2) + 120 , MARGIN + sumx - x1 , ((-sumy + y1) / 2) + 120);
 		}
-		
-		
+
 	}
+
+	
 	private static double WEIGHT = 80.0;
+
 	public void showStatistics() {
 
-		setColor(0,0,0);
-		setFont("Courier",12);
-		
-		drawString("Total Time     :" + GPSUtils.formatTime(gpscomputer.totalTime()),20,20);
-		drawString("Total distance :    " + GPSComputer.rund (gpscomputer.totalDistance() /1000)  + " km",20,40);
-		drawString("Total elevation:    " + GPSComputer.rund (gpscomputer.totalElevation()) + " m",20,60);
-		drawString("Max speed      :    " + gpscomputer.maxSpeed() + " km/t",20,80);
-		drawString("Average speed  :    " + GPSComputer.rund(gpscomputer.averageSpeed()) + " km/t",20,100);
-		drawString("Energy         :    " + GPSComputer.rund(gpscomputer.totalKcal(WEIGHT)) +" kcal ",20,120);
+		setColor(0, 0, 0);
+		setFont("Courier", 12);
+
+		drawString("Total Time     :" + GPSUtils.formatTime(gpscomputer.totalTime()), 20, 20);
+		drawString("Total distance :    " + GPSComputer.rund(gpscomputer.totalDistance() / 1000) + " km", 20, 40);
+		drawString("Total elevation:    " + GPSComputer.rund(gpscomputer.totalElevation()) + " m", 20, 60);
+		drawString("Max speed      :    " + gpscomputer.maxSpeed() + " km/t", 20, 80);
+		drawString("Average speed  :    " + GPSComputer.rund(gpscomputer.averageSpeed()) + " km/t", 20, 100);
+		drawString("Energy         :    " + GPSComputer.rund(gpscomputer.totalKcal(WEIGHT)) + " kcal ", 20, 120);
 	}
 
 }

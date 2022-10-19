@@ -46,7 +46,7 @@ public class ShowSpeed extends EasyGraphics {
 		// get segments speeds from the GPS computer object		
 		double[] speeds = gpscomputer.speeds();
 
-		int x = MARGIN,y;
+		int x = MARGIN;
 		
 		int antall = 0;
 		
@@ -57,13 +57,15 @@ public class ShowSpeed extends EasyGraphics {
 			
 			drawLine(i+x,ybase,i+x,ybase-fart);
 			antall++;
+		
 		}
 
-		//gjsnitt fart
+		//Lager en horisontal linje tilsvarende gjennomsnittsfarten
+		
 		int gjSnitt = (int) gpscomputer.averageSpeed();
 		setColor(0,250,0);
 		
-		drawLine(x,ybase-gjSnitt,antall+x,ybase-gjSnitt);
+		drawLine(x , ybase-gjSnitt , antall+x , ybase-gjSnitt);
 		
 	}
 }
